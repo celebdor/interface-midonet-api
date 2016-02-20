@@ -1,0 +1,4 @@
+name: midonet-api
+summary: Interface between a MidoNet API provider and its clients
+version: 1
+maintainer: "Antoni Segura Puimedon <toni@midokura.com>"
