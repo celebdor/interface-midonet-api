@@ -21,18 +21,12 @@ from charms.reactive import scopes
 class MidonetApiRequires(RelationBase):
     scope = scopes.GLOBAL
 
-    def get_api_address(self):
-        """Returns the MidoNet API address if set, None otherwise."""
-        return self.get_remote('host')
-
-    def get_api_port(self):
-        """Returns the MidoNet API port if set, None otherwise."""
-        return self.get_remote('port')
+    auto_accessors = ['host', 'port']
 
     @hook('{requires:midonet-api}-relation-{joined,changed}')
     def changed(self):
         self.set_state('{relation_name}.connected')
-        if self.get_api_address() and self.get_api_port():
+        if self.connection_data():
             self.set_state('{relation_name}.available')
 
     @hook('{requires:midonet-api}-relation-{departed,broken}')
@@ -40,3 +34,11 @@ class MidonetApiRequires(RelationBase):
         conv = self.conversation()
         conv.remove_state('{relation_name}.available')
         conv.remove_state('{relation_name}.connected')
+
+    def connection_data(self):
+        """Returns a tuple of host address and port."""
+        host = self.host()
+        port = self.port()
+        if host and port:
+            return host, port
+        return None
